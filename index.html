@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Estudiantina 2027</title>
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f4faff;
+  color: #24345f;
+}
+
+header {
+  background: #13a9df;
+  color: white;
+  text-align: center;
+  padding: 30px 15px;
+  border-bottom: 6px solid #ffd447;
+}
+
+header h1 { margin: 5px; }
+header p { margin-bottom: 0; }
+
+main {
+  max-width: 650px;
+  margin: auto;
+  padding: 20px;
+}
+
+h2 { color: #24345f; }
+
+.card {
+  background: white;
+  border-radius: 14px;
+  padding: 16px;
+  margin: 12px 0;
+  box-shadow: 0 2px 8px #00000012;
+  border: 1px solid #dcebf5;
+}
+
+.course {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  border: none;
+  background: white;
+  color: #24345f;
+  text-align: left;
+  font-size: 17px;
+  cursor: pointer;
+}
+
+.points {
+  font-weight: bold;
+  color: #078fc4;
+}
+
+button:active { opacity: .7; }
+
+.yellow {
+  background: #fff3bd;
+  border-left: 5px solid #ffd447;
+}
+
+#details { display: none; }
+
+.back {
+  background: #13a9df;
+  color: white;
+  border: none;
+  padding: 12px 18px;
+  border-radius: 8px;
+  font-size: 15px;
+  margin-bottom: 12px;
+}
+
+footer {
+  text-align: center;
+  padding: 25px;
+  color: #68758b;
+  font-size: 13px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div style="font-size:35px">★</div>
+  <h1>ESTUDIANTINA 2027</h1>
+  <p>Instituto Contardo Ferrini</p>
+  <p>¡Que comience la competencia!</p>
+</header>
+
+<main>
+
+<section id="ranking">
+  <h2>🏆 Ranking general</h2>
+  <p>Clasificación de los cursos participantes</p>
+  <div id="courses"></div>
+</section>
+
+<section id="details" class="card">
+  <button class="back" onclick="showRanking()">← Volver</button>
+  <h2 id="courseName"></h2>
+  <h3 id="courseTotal"></h3>
+  <h3>🎮 Puntos por juego</h3>
+  <div id="games"></div>
+</section>
+
+</main>
+
+<footer>
+  Estudiantina 2027 · Instituto Contardo Ferrini
+</footer>
+
+<script>
+const courses = [
+  {name:"1.º Año", games:[{name:"Quemado",points:null}]},
+  {name:"2.º Año", games:[{name:"Quemado",points:null}]},
+  {name:"3.º Año", games:[{name:"Quemado",points:null}]},
+  {name:"4.º Año", games:[{name:"Quemado",points:null}]},
+  {name:"5.º Año", games:[{name:"Quemado",points:null}]},
+  {name:"6.º Año", games:[{name:"Quemado",points:null}]}
+];
+
+function total(course) {
+  return course.games.reduce((sum,g) =>
+    sum + (g.points ?? 0), 0);
+}
+
+function showRanking() {
+  document.getElementById("ranking").style.display="block";
+  document.getElementById("details").style.display="none";
+}
+
+function showDetails(index) {
+  const course = courses[index];
+
+  document.getElementById("ranking").style.display="none";
+  document.getElementById("details").style.display="block";
+  document.getElementById("courseName").textContent=course.name;
+  document.getElementById("courseTotal").textContent=
+    total(course)+" puntos";
+
+  document.getElementById("games").innerHTML=
+    course.games.map(g => `
+      <div class="card">
+        <strong>${g.name}</strong>
+        <p>${g.points === null ? "Pendiente" : g.points+" puntos"}</p>
+      </div>
+    `).join("");
+}
+
+function render() {
+  const sorted = [...courses].sort((a,b)=>total(b)-total(a));
+  let previous = null;
+  let position = 0;
+
+  document.getElementById("courses").innerHTML =
+    sorted.map(course => {
+      position++;
+      const points = total(course);
+      if (points !== previous) {
+        previous = points;
+      } else {
+        position--;
+      }
+
+      const index = courses.indexOf(course);
+
+      return `
+        <div class="card ${position <= 3 ? "yellow" : ""}">
+          <button class="course" onclick="showDetails(${index})">
+            <span>
+              <strong>${position}.º</strong> ${course.name}
+            </span>
+            <span class="points">${points} pts →</span>
+          </button>
+        </div>
+      `;
+    }).join("");
+}
+
+render();
+</script>
+
+</body>
+</html>
